@@ -1,0 +1,53 @@
+﻿@inject UserManager<ApplicationUser> UserManager
+@{
+    ViewData["Title"] = "Recommendations";
+}
+<h2>Recommendations</h2>
+
+<div>
+    <table class="table table-hover" id="table">
+        <thead>
+            <tr class="active">
+                <th scope="col">Name</th>
+                <th scope="col">Recommended Amount</th>
+            </tr>
+        </thead>
+        <tbody></tbody>
+    </table>
+</div>
+
+@{
+    var userId = UserManager.GetUserId(User);
+}
+@section scripts
+    {
+    <script src="js/site.js"></script>
+    <script>
+        var recommender = new jsrecommender.Recommender();
+
+        $(document).ready(function() {
+            $.ajax({
+                url: "/GetAllItemOrder",
+                success: function(data) {
+                    var table = new jsrecommender.Table();
+                    for (var i = 0; i < data.length; i++) {
+                        table.setCell(data[i].name, data[i].orderId.replace(/-/g, ""), data[i].quantity);
+                    }
+                    recommender.fit(table);
+                    var predicted_table = recommender.transform(table);
+                    var id = @Html.Raw(Json.Serialize(userId));
+                    id = id.replace(/-/g, "");
+                    var table = $("#table tbody");
+                    for (var j = 0; j < predicted_table.rowNames.length; ++j) {
+                        var item = predicted_table.rowNames[j];
+                        table.append("<tr>" +
+                            "<td>" + item + "</td>" +
+                            "<td class='quantity'>" + (Math.max(0, Math.round(predicted_table.getCell(item, id))) || "N/A") + "</td>" +
+                            "</tr>");
+
+                    }
+                }
+            });
+        });
+    </script>
+}

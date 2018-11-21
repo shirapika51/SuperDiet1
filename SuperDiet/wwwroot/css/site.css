@@ -1,24 +1,57 @@
-﻿body {
+﻿/* Please see documentation at https://docs.microsoft.com/aspnet/core/client-side/bundling-and-minification\ 
+for details on configuring this project to bundle and minify static web assets. */
+body {
     padding-top: 50px;
     padding-bottom: 20px;
+    direction: rtl;
+}
+
+th { 
+    text-align: right;
 }
 
 /* Wrapping element */
 /* Set some basic padding to keep content from hitting the edges */
 .body-content {
-    padding-left: 15px;
-    padding-right: 15px;
+    padding: 0;
+    margin: 0 auto;
+}
+
+.container {
+    width: 100%;
+    overflow: hidden;
 }
 
 /* Carousel */
-.carousel-caption p {
-    font-size: 20px;
-    line-height: 1.4;
+
+.carousel-inner {
+    height: 260px;
+    width: 100%;
 }
 
-/* Make .svg files in the carousel display properly in older browsers */
-.carousel-inner .item img[src$=".svg"] {
-    width: 100%;
+    .carousel-inner img {
+        width: 100%;
+        height: auto !important;
+        vertical-align: middle;
+    }
+
+/* Sale Section */
+.sale-section {
+    text-align: center;
+}
+
+    .sale-section img {
+        width: 200px;
+        height: 200px;
+        margin-left: auto;
+        margin-right: auto;
+    }
+
+/*Weather Section*/
+.weatherwidget-io {
+    width: 400px;
+    margin: auto;
+    margin-top: 50px;
 }
 
 /* QR code generator */
@@ -32,4 +65,27 @@
     .carousel-caption {
         display: none;
     }
+}
+
+/*Contact Page*/
+
+/*About-Section*/
+.welcome-section {
+    text-align: center;
+}
+
+.branch-section {
+    text-align: center;
+}
+
+.contact-section {
+    text-align: center;
+}
+
+/*Map Section*/
+
+#MyMap {
+    width: 600px;
+    height: 400px;
+    margin: auto;
 }

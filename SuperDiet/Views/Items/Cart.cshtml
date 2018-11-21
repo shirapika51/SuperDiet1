@@ -1,0 +1,77 @@
+﻿@model SuperDiet.Models.Order
+
+@{
+    ViewData["Title"] = "Cart";
+}
+
+<h2>סל קניות</h2>
+
+<table class="table" id="table">
+    <thead>
+        <tr>
+            <th></th>
+            <th>
+                שם המוצר
+            </th>
+            <th>
+                מחיר
+            </th>
+            <th>
+                כמות
+            </th>
+            <th>
+                סה"כ למוצר
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody></tbody>
+</table>
+@section scripts
+    {
+    <script>
+        $(document).ready(fillTable());
+
+        function fillTable() {
+            $.ajax({
+                url: "/GetItemOrder",
+                success: function (data) {
+                    var sum = 0;
+                    var total = 0;
+                    var table = $("#table tbody");
+                    table.empty();
+                    $.each(data, function (i, item) {
+                        total = item.price * item.quantity;
+                        table.append("<tr>" +
+                            "<td>" + "<img class='rounded-circle img-fluid d-block mx-auto' src='/images/" + item.name + ".jpg' width='85' height='85'>" + "</td>" +
+                            "<td>" + "<a href='/Items/Details/" + item.id + "'>" + item.name + "</a>" + "</td>" +
+                            "<td>" + item.price + " ₪</td>" +
+                            "<td class='quantity'>" + item.quantity + "</td>" +
+                            "<td>" + total + "</td>" +
+                            "<td>" +
+                            "<a href='#' class='rmv-from-cart' data-item-id='" + item.id + "'>הסר מהסל</a>" +
+                            "</td>" +
+                            "</tr>");
+                        sum += item.price * item.quantity;
+                    });
+                    table.append("<br><td> סך הכל:" + sum + " ₪</td>")
+                }
+            });
+        };
+
+
+        $("#table").on("click", ".rmv-from-cart", function () {
+            var button = $(this);
+            $.ajax({
+                url: "/RemoveFromCart/" + button.attr("data-item-id"),
+                method: "POST",
+                success: function () {
+                    alert("הוסר מהסל בהצלחה!");
+                    var table = $("#table tbody");
+                    table.empty();
+                    fillTable();
+                }
+            });
+        });
+    </script>
+}

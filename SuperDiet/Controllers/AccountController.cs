@@ -10,6 +10,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using SuperDiet.Data;
 using SuperDiet.Models;
 using SuperDiet.Models.AccountViewModels;
 using SuperDiet.Services;
@@ -20,21 +21,27 @@ namespace SuperDiet.Controllers
     [Route("[controller]/[action]")]
     public class AccountController : Controller
     {
+        private readonly ApplicationDbContext _context;
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly SignInManager<ApplicationUser> _signInManager;
         private readonly IEmailSender _emailSender;
         private readonly ILogger _logger;
+        private readonly RoleManager<IdentityRole> _roleManager;
 
         public AccountController(
-            UserManager<ApplicationUser> userManager,
+        ApplicationDbContext context,
+        UserManager<ApplicationUser> userManager,
             SignInManager<ApplicationUser> signInManager,
             IEmailSender emailSender,
-            ILogger<AccountController> logger)
+            ILogger<AccountController> logger,
+            RoleManager<IdentityRole> roleManager)
         {
             _userManager = userManager;
             _signInManager = signInManager;
             _emailSender = emailSender;
             _logger = logger;
+            _context = context;
+            _roleManager = roleManager;
         }
 
         [TempData]
@@ -220,7 +227,14 @@ namespace SuperDiet.Controllers
             ViewData["ReturnUrl"] = returnUrl;
             if (ModelState.IsValid)
             {
-                var user = new ApplicationUser { UserName = model.Email, Email = model.Email };
+                var user = new ApplicationUser
+                {
+                    UserName = model.Email,
+                    Email = model.Email,
+                    PhoneNumber = model.PhoneNumber,
+                    FirstName = model.FirstName,
+                    LastName = model.LastName
+                };
                 var result = await _userManager.CreateAsync(user, model.Password);
                 if (result.Succeeded)
                 {
@@ -232,6 +246,26 @@ namespace SuperDiet.Controllers
 
                     await _signInManager.SignInAsync(user, isPersistent: false);
                     _logger.LogInformation("User created a new account with password.");
+                    var userOrder = new Order { ID = user.Id, Date = DateTime.Now };
+                    _context.Order.Add(userOrder);
+                    await _context.SaveChangesAsync();
+                    if (!await _roleManager.RoleExistsAsync("Admin"))
+                    {
+                        await _roleManager.CreateAsync(new IdentityRole("Admin"));
+                    }
+
+                    if (!await _roleManager.RoleExistsAsync("Costumer"))
+                    {
+                        await _roleManager.CreateAsync(new IdentityRole("Costumer"));
+                    }
+                    if (user.FirstName == "Shira" || user.FirstName == "Meshi" || user.FirstName == "Yoav")
+                    {
+                        await _userManager.AddToRoleAsync(user,"Admin");
+                    }
+                    else
+                    {
+                        await _userManager.AddToRoleAsync(user, "Costumer");
+                    }
                     return RedirectToLocal(returnUrl);
                 }
                 AddErrors(result);

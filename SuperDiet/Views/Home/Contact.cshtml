@@ -1,17 +1,87 @@
-﻿@{
+﻿@model IEnumerable<SuperDiet.Models.Branch>
+@{
     ViewData["Title"] = "Contact";
 }
-<h2>@ViewData["Title"]</h2>
-<h3>@ViewData["Message"]</h3>
+<div class="welcome-section">
+    <h1>Super Diet</h1>
+    <h4>ברוכים הבאים לסופר דיאט - הסופר שיעזור לכם בדיאטה</h4>
+    <p>
+        אנחנו מאמינים באורח חיים בריא. בסופר דיאט יודעים שהמפתח להצלחה טמון בעצמנו ובכוח הרצון שלנו.<br />
+        אנחנו כאן כדי לעזור לכל מי שרוצה ללמוד לקיים אורח חיים בריא יותר ולרדת במשקל.
+    </p>
+    <p>
+        בסופר שלנו, תוכלו למצוא את מגוון המוצרים הבריאים בכל קטגוריה ולהרכיב לכם רשימת קניות מתאימה ובמחירים המשתלמים ביותר.
+    </p>
+</div>
 
-<address>
-    One Microsoft Way<br />
-    Redmond, WA 98052-6399<br />
-    <abbr title="Phone">P:</abbr>
-    425.555.0100
-</address>
+<div class="branch-section">
+    <h2>הסניפים שלנו</h2>
+    <p>
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>
+                        @Html.DisplayNameFor(model => model.City)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => model.Address)
+                    </th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model)
+                {
+                    <tr>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.City)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.Address)
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </p>
+</div>
 
-<address>
-    <strong>Support:</strong> <a href="mailto:Support@example.com">Support@example.com</a><br />
-    <strong>Marketing:</strong> <a href="mailto:Marketing@example.com">Marketing@example.com</a>
-</address>
+<div id="MyMap"></div>
+
+<div class="contact-section">
+    <h3>צרו איתנו קשר</h3>
+    מייל: superdiet@gmail.com<br />
+    טלפון: 03-5555555<br />
+    <a href="https://www.facebook.com/SuperDiet1"><i class="fa fa-facebook-f" style="font-size:40px"></i></a><br />
+    <div class="fb-share-button" data-href="https://www.facebook.com/SuperDiet1" data-layout="button" data-size="large" data-mobile-iframe="false"><a target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=https%3A%2F%2Fwww.facebook.com%2FSuperDiet1&amp;src=sdkpreparse" class="fb-xfbml-parse-ignore">Share</a></div>
+</div>
+@section scripts
+    {
+    <script>
+        function displayMap() {
+            document.getElementById('MyMap').style.display = "block";
+            initialize();
+        }
+        function initialize() {
+            var myOptions = {
+                zoom: 12,
+                center: new google.maps.LatLng(31.968360, 34.788274),
+                mapTypeId: google.maps.MapTypeId.ROADMAP
+            }
+            map = new google.maps.Map(document.getElementById("MyMap"), myOptions);
+            $.ajax({
+                url: "/GetAllBranches",
+                success: function (result) {
+                    for (var i = 0; i < result.length; i++) {
+                        var position = new google.maps.Marker({
+                            position: new google.maps.LatLng(result[i].latitude, result[i].longtitude),
+                            title: result[i].address + " " + result[i].city
+                        });
+                        position.setMap(map);
+                    }
+                }
+            });
+        }
+        window.onload = displayMap;
+    </script>
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCHfrMCGKVV-wfWMLlkT8nwewHedtQQEhE&callback=displayMap" async defer></script>
+}
