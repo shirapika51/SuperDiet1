@@ -1,0 +1,76 @@
+﻿@model IEnumerable<SuperDiet.Models.ApplicationUser>
+
+@{
+    ViewData["Title"] = "Index";
+}
+
+<h2>Index</h2>
+<input id="search_input_email" type="text" placeholder="אימייל">
+<input id="search_input_fname" type="text" placeholder="שם פרטי">
+<input id="search_input_lname" type="text" placeholder="שם משפחה">
+<button id="search" type="submit">חיפוש</button>
+<button id="clear-search" type="submit">clear</button>
+<table class="table" id="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.Email)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.FirstName)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.LastName)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.PhoneNumber)
+            </th>
+        </tr>
+    </thead>
+    <tbody></tbody>
+</table>
+<a asp-action="Index">חזור לעמוד הקודם</a>
+@section scripts
+    {
+    <script>
+        function fillTable(url) {
+            $.ajax({
+                url: url,
+                success: function (data) {
+                    var table = $("#table tbody");
+                    table.empty();
+                    $.each(data, function (i, user) {
+                        table.append("<tr>" +
+                            "<td>" + user.email + "</td>" +
+                            "<td>" + user.firstName + "</td>" +
+                            "<td>" + user.lastName + "</td>" +
+                            "<td>" + user.phoneNumber + "</td>" +
+                            "</tr>");
+                    });
+                }
+            });
+        };
+
+        $(document).ready(function () {
+            fillTable("/GetUsers");
+        });
+
+        $("#search").on("click", function () {
+            var button = $(this);
+            var filteremail = $('#search_input_email').val().toString();
+            var filterfname = $('#search_input_fname').val().toString();
+            var filterlname = $('#search_input_lname').val().toString();
+            if (filteremail == "")
+                filteremail = "empty";
+            if (filterfname == "")
+                filterfname = "empty";
+            if (filterlname == "")
+                filterlname = "empty";
+            fillTable("/SearchUser/" + filteremail + "/" + filterfname + "/" + filterlname);
+        });
+
+        $("#clear-search").on("click", function () {
+            fillTable("/GetUsers");
+        });
+    </script>
+}

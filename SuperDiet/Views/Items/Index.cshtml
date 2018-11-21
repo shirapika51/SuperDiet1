@@ -1,0 +1,98 @@
+﻿@model IEnumerable<SuperDiet.Models.Item>
+@{
+    ViewData["Title"] = "Index";
+}
+
+<h2>מוצרים</h2>
+<input id="search_input_name" type="text" placeholder="שם המוצר">
+<input id="search_input_price" type="text" placeholder="מחיר מקסימום">
+<input id="search_input_calories" type="text" placeholder="מקסימום קלוריות">
+<button id="search" type="submit">חיפוש</button>
+<button id="clear-search" type="submit">clear</button>
+<table class="table" id="table">
+    <thead>
+        <tr>
+            <th></th>
+            <th>
+                שם המוצר
+            </th>
+            <th>
+                מחיר
+            </th>
+            <th>
+                כמות במלאי
+            </th>
+            <th>
+                קלוריות ל100 גרם
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody></tbody>
+</table>
+@section scripts
+    {
+    <script>
+        function fillTable(url) {
+            $.ajax({
+                url: url,
+                success: function (data) {
+                    var table = $("#table tbody");
+                    table.empty();
+                    $.each(data, function (i, item) {
+                        table.append("<tr>" +
+                            "<td>" + "<img class='rounded-circle img-fluid d-block mx-auto' src='/images/" + item.name + ".jpg' width='85' height='85'>" + "</td>" +
+                            "<td>" + "<a href='/Items/Details/" + item.id + "'>" + item.name + "</a>" + "</td>" +
+                            "<td>" + item.price + " ₪</td>" +
+                            "<td class='quantity'>" + item.quantity + "</td>" +
+                            "<td>" + item.calories + "</td>" +
+                            "<td>" +
+                            "<a href='#' class='add-to-cart' data-item-id='" + item.id + "'>הוסף לסל</a>" +
+                            "</td>" +
+                            "</tr>");
+                    });
+                }
+            });
+        };
+
+        $(document).ready(function () {
+            fillTable("/GetItem");
+        });
+
+        $("#table").on("click", ".add-to-cart", function () {
+            var button = $(this);
+            $.ajax({
+                url: "/AddToCart/" + button.attr("data-item-id"),
+                method: "POST",
+                success: function () {
+                    var quantity = button.parents("tr").children(".quantity").html();
+                    button.parents("tr").children(".quantity").html(quantity - 1);
+                    alert("הוסף לסל בהצלחה!");
+                },
+                statusCode: {
+                    404: function () {
+                        alert("המוצר חסר במלאי");
+                    }
+                }
+            });
+        });
+
+        $("#search").on("click", function () {
+            var button = $(this);
+            var filtername = $('#search_input_name').val().toString();
+            var filterprice = $('#search_input_price').val().toString();
+            var filtercalories = $('#search_input_calories').val().toString();
+            if (filtername == "")
+                filtername = "empty";
+            if (filterprice == "")
+                filterprice = 20000;
+            if (filtercalories == "")
+                filtercalories = 20000;
+            fillTable("/Search/" + filtername + "/" + filterprice + "/" + filtercalories);
+        });
+
+        $("#clear-search").on("click", function () {
+            fillTable("/GetItem");
+        });
+    </script>
+}

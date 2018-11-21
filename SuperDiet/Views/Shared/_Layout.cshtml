@@ -1,22 +1,40 @@
-﻿<!DOCTYPE html>
+﻿@inject Microsoft.ApplicationInsights.AspNetCore.JavaScriptSnippet JavaScriptSnippet
+@inject UserManager<ApplicationUser> UserManager
+@inject SignInManager<ApplicationUser> SignInManager
+
+<!DOCTYPE html>
 <html>
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta property="og:title" content="Super Diet" />
+    <meta property="og:description" content="The best market for your healthy diet" />
     <title>@ViewData["Title"] - SuperDiet</title>
 
-    <environment include="Development">
+    <environment names="Development">
         <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.css" />
         <link rel="stylesheet" href="~/css/site.css" />
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
     </environment>
-    <environment exclude="Development">
+    <environment names="Staging,Production">
         <link rel="stylesheet" href="https://ajax.aspnetcdn.com/ajax/bootstrap/3.3.7/css/bootstrap.min.css"
               asp-fallback-href="~/lib/bootstrap/dist/css/bootstrap.min.css"
               asp-fallback-test-class="sr-only" asp-fallback-test-property="position" asp-fallback-test-value="absolute" />
         <link rel="stylesheet" href="~/css/site.min.css" asp-append-version="true" />
     </environment>
+    @Html.Raw(JavaScriptSnippet.FullScript)
 </head>
 <body>
+    <div id="fb-root"></div>
+    <script>
+        (function (d, s, id) {
+            var js, fjs = d.getElementsByTagName(s)[0];
+            if (d.getElementById(id)) return;
+            js = d.createElement(s); js.id = id;
+            js.src = 'https://connect.facebook.net/he_IL/sdk.js#xfbml=1&version=v3.2&appId=1940585342911142';
+            fjs.parentNode.insertBefore(js, fjs);
+        }(document, 'script', 'facebook-jssdk'));
+    </script>
     <nav class="navbar navbar-inverse navbar-fixed-top">
         <div class="container">
             <div class="navbar-header">
@@ -30,9 +48,15 @@
             </div>
             <div class="navbar-collapse collapse">
                 <ul class="nav navbar-nav">
-                    <li><a asp-area="" asp-controller="Home" asp-action="Index">Home</a></li>
-                    <li><a asp-area="" asp-controller="Home" asp-action="About">About</a></li>
-                    <li><a asp-area="" asp-controller="Home" asp-action="Contact">Contact</a></li>
+                    <li><a asp-area="" asp-controller="Home" asp-action="Index">דף הבית</a></li>
+                    <li><a asp-area="" asp-controller="Home" asp-action="Contact">צור קשר</a></li>
+                    @if (SignInManager.IsSignedIn(User))
+                    {
+                        @if (User.IsInRole("Admin"))
+                        {
+                            <li><a asp-area="" asp-controller="AdminPanel" asp-action="Index">Admin Panel</a></li>
+                        }
+                    }
                 </ul>
                 @await Html.PartialAsync("_LoginPartial")
             </div>
@@ -42,16 +66,16 @@
         @RenderBody()
         <hr />
         <footer>
-            <p>&copy; 2018 - SuperDiet</p>
+            <p>&copy; 2018 - SuperDiet - Created by Meshi, Shira & Yoav</p>
         </footer>
     </div>
 
-    <environment include="Development">
+    <environment names="Development">
         <script src="~/lib/jquery/dist/jquery.js"></script>
         <script src="~/lib/bootstrap/dist/js/bootstrap.js"></script>
         <script src="~/js/site.js" asp-append-version="true"></script>
     </environment>
-    <environment exclude="Development">
+    <environment names="Staging,Production">
         <script src="https://ajax.aspnetcdn.com/ajax/jquery/jquery-2.2.0.min.js"
                 asp-fallback-src="~/lib/jquery/dist/jquery.min.js"
                 asp-fallback-test="window.jQuery"
