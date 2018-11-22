@@ -36,12 +36,18 @@ namespace SuperDiet.Controllers
         [HttpGet("GetStatistics")]
         public IActionResult GetStatistics()
         {
-            var countitems = (from itemOrder in _context.ItemOrder
-                              select new
-                              {
-                                  name = itemOrder.Item.Name,
-                                  count = itemOrder.Quantity
-                              }).GroupBy(i => i.name).Count();
+            var countitems = from itemOrder in _context.ItemOrder
+                          join item in _context.Item
+                          on itemOrder.ItemID equals item.ID
+                          group itemOrder by item.Name into depGroup
+                          select new { name = depGroup.Key, count = depGroup.Sum(x => x.Quantity) };
+            //var countitems = (from itemOrder in _context.ItemOrder
+            //                  group itemOrder.Item.Name by itemOrder.Item.Name into devgroup
+            //                  select new
+            //                  {
+            //                      name = devgroup.Key,
+            //                      count = devgroup.Sum()
+            //                  });
             return Ok(countitems);
         }
     }
