@@ -8,85 +8,145 @@
 
 @section scripts
     {
-    <script src="https://phuonghuynh.github.io/js/bower_components/jquery/dist/jquery.min.js"></script>
-    <script src="https://phuonghuynh.github.io/js/bower_components/d3/d3.min.js"></script>
-    <script src="https://phuonghuynh.github.io/js/bower_components/d3-transform/src/d3-transform.js"></script>
-    <script src="https://phuonghuynh.github.io/js/bower_components/cafej/src/extarray.js"></script>
-    <script src="https://phuonghuynh.github.io/js/bower_components/cafej/src/misc.js"></script>
-    <script src="https://phuonghuynh.github.io/js/bower_components/cafej/src/micro-observer.js"></script>
-    <script src="https://phuonghuynh.github.io/js/bower_components/microplugin/src/microplugin.js"></script>
-    <script src="https://phuonghuynh.github.io/js/bower_components/bubble-chart/src/bubble-chart.js"></script>
-    <script src="https://phuonghuynh.github.io/js/bower_components/bubble-chart/src/plugins/central-click/central-click.js"></script>
-    <script src="https://phuonghuynh.github.io/js/bower_components/bubble-chart/src/plugins/lines/lines.js"></script>
-    <script src="https://d3js.org/d3.v5.min.js"></script>
-    <script src="js/charts.js"></script>
     <script>
         $(document).ready(function () {
             $.ajax({
                 url: "/GetStatistics",
                 success: function (data) {
-                    var bubbleChart = new d3.svg.BubbleChart({
-                        supportResponsive: true,
-                        size: 600,
-                        innerRadius: 600 / 3.5,
-                        radiusMin: 50,
-                        data: {
-                            items: data,
-                            eval: function (item) { return item.count; },
-                            classed: function (item) { return item.name; }
-                        },
-                        plugins: [
-                            {
-                                name: "lines",
-                                options: {
-                                    format: [
-                                        {// Line #0
-                                            textField: "count",
-                                            classed: { count: true },
-                                            style: {
-                                                "font-size": "28px",
-                                                "font-family": "Source Sans Pro, sans-serif",
-                                                "text-anchor": "middle",
-                                                fill: "white"
-                                            },
-                                            attr: {
-                                                dy: "0px",
-                                                x: function (d) { return d.cx; },
-                                                y: function (d) { return d.cy; }
-                                            }
-                                        },
-                                        {// Line #1
-                                            textField: "text",
-                                            classed: { text: true },
-                                            style: {
-                                                "font-size": "14px",
-                                                "font-family": "Source Sans Pro, sans-serif",
-                                                "text-anchor": "middle",
-                                                fill: "white"
-                                            },
-                                            attr: {
-                                                dy: "20px",
-                                                x: function (d) { return d.cx; },
-                                                y: function (d) { return d.cy; }
-                                            }
-                                        }
-                                    ],
-                                    centralFormat: [
-                                        {// Line #0
-                                            style: { "font-size": "50px" },
-                                            attr: {}
-                                        },
-                                        {// Line #1
-                                            style: { "font-size": "30px" },
-                                            attr: { dy: "40px" }
-                                        }
-                                    ]
-                                }
-                            }
-                        ]
-                    });
+                    var margin = { top: 20, right: 20, bottom: 70, left: 40 },
+                        width = 600 - margin.left - margin.right,
+                        height = 300 - margin.top - margin.bottom;
+                    var x = d3.scale.ordinal().rangeRoundBands([0, width], .1)
+                    var y = d3.scale.linear().range([height, 0]);
+                    var xAxis = d3.svg.axis()
+                        .scale(x)
+                        .orient("bottom")
+                        //.tickValues(data)
+                        //.tickFormat(d => d.name);
+                    var yAxis = d3.svg.axis()
+                        .scale(y)
+                        .orient("left")
+                        .ticks(1);
+                    var svg = d3.select("body").append("svg")
+                        .attr("width", width + margin.left + margin.right)
+                        .attr("height", height + margin.top + margin.bottom)
+                        .append("g")
+                        .attr("transform",
+                            "translate(" + margin.left + "," + margin.top + ")");
+                    x.domain(data.map(function (d) { return d.name; }));
+                    y.domain([0, d3.max(data, function (d) { return d.quantity; })]);
+                    svg.append("g")
+                        .attr("class", "x axis")
+                        .attr("transform", "translate(0," + height + ")")
+                        .call(xAxis)
+                        .selectAll("text")
+                        .style("text-anchor", "end")
+                        .attr("dx", "-.8em")
+                        .attr("dy", "-.55em")
+                        .attr("transform", "rotate(-90)");
+                    svg.append("g")
+                        .attr("class", "y axis")
+                        .call(yAxis)
+                        .append("text")
+                        .attr("transform", "rotate(-90)")
+                        .attr("y", 6)
+                        .attr("dy", ".71em")
+                        .style("text-anchor", "end")
+                        .text("Quantity");
+                    svg.selectAll(".bar")
+                        .data(data)
+                        .enter().append("rect")
+                        .attr("class", "bar")
+                        .style("fill", "steelblue")
+                        .attr("x", function (d) { return x(d.name); })
+                        .attr("width", x.rangeBand())
+                        .attr("y", function (d) { return y(d.quantity); })
+                        .attr("height", function (d) { return height - y(d.quantity); });
                 }
             });
         });
     </script>
+
+
+    @*<script src="https://phuonghuynh.github.io/js/bower_components/jquery/dist/jquery.min.js"></script>
+        <script src="https://phuonghuynh.github.io/js/bower_components/d3/d3.min.js"></script>
+        <script src="https://phuonghuynh.github.io/js/bower_components/d3-transform/src/d3-transform.js"></script>
+        <script src="https://phuonghuynh.github.io/js/bower_components/cafej/src/extarray.js"></script>
+        <script src="https://phuonghuynh.github.io/js/bower_components/cafej/src/misc.js"></script>
+        <script src="https://phuonghuynh.github.io/js/bower_components/cafej/src/micro-observer.js"></script>
+        <script src="https://phuonghuynh.github.io/js/bower_components/microplugin/src/microplugin.js"></script>
+        <script src="https://phuonghuynh.github.io/js/bower_components/bubble-chart/src/bubble-chart.js"></script>
+        <script src="https://phuonghuynh.github.io/js/bower_components/bubble-chart/src/plugins/central-click/central-click.js"></script>
+        <script src="https://phuonghuynh.github.io/js/bower_components/bubble-chart/src/plugins/lines/lines.js"></script>
+        <script src="https://d3js.org/d3.v5.min.js"></script>
+        <script src="js/charts.js"></script>
+        <script>
+            $(document).ready(function () {
+                $.ajax({
+                    url: "/GetStatistics",
+                    success: function (data) {
+                        var bubbleChart = new d3.svg.BubbleChart({
+                            supportResponsive: true,
+                            size: 600,
+                            innerRadius: 600 / 3.5,
+                            radiusMin: 50,
+                            data: {
+                                items: data,
+                                eval: function (item) { return item.count; },
+                                classed: function (item) { return item.name; }
+                            },
+                            plugins: [
+                                {
+                                    name: "lines",
+                                    options: {
+                                        format: [
+                                            {// Line #0
+                                                textField: "count",
+                                                classed: { count: true },
+                                                style: {
+                                                    "font-size": "28px",
+                                                    "font-family": "Source Sans Pro, sans-serif",
+                                                    "text-anchor": "middle",
+                                                    fill: "white"
+                                                },
+                                                attr: {
+                                                    dy: "0px",
+                                                    x: function (d) { return d.cx; },
+                                                    y: function (d) { return d.cy; }
+                                                }
+                                            },
+                                            {// Line #1
+                                                textField: "text",
+                                                classed: { text: true },
+                                                style: {
+                                                    "font-size": "14px",
+                                                    "font-family": "Source Sans Pro, sans-serif",
+                                                    "text-anchor": "middle",
+                                                    fill: "white"
+                                                },
+                                                attr: {
+                                                    dy: "20px",
+                                                    x: function (d) { return d.cx; },
+                                                    y: function (d) { return d.cy; }
+                                                }
+                                            }
+                                        ],
+                                        centralFormat: [
+                                            {// Line #0
+                                                style: { "font-size": "50px" },
+                                                attr: {}
+                                            },
+                                            {// Line #1
+                                                style: { "font-size": "30px" },
+                                                attr: { dy: "40px" }
+                                            }
+                                        ]
+                                    }
+                                }
+                            ]
+                        });
+                    }
+                });
+            });*@
+    @*</script>*@
 }
