@@ -10,6 +10,17 @@ th {
     text-align: right;
 }
 
+.bubbleChart {
+    min-width: 100px;
+    max-width: 700px;
+    height: 700px;
+    margin: 0 auto;
+}
+
+.bubbleChart svg {
+    background: #000000;
+}
+
 /* Wrapping element */
 /* Set some basic padding to keep content from hitting the edges */
 .body-content {

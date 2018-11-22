@@ -9,6 +9,7 @@
     <form asp-area="" asp-controller="Account" asp-action="Logout" method="post" id="logoutForm" class="navbar-right">
         <ul class="nav navbar-nav navbar-right">
             <li><a asp-area="" asp-controller="Items" asp-action="Index">Items</a></li>
+            <li><a asp-area="" asp-controller="Recommendations" asp-action="Index">Recommendations</a></li>
             <li>
                 <a class="glyphicon glyphicon-shopping-cart" asp-controller="Items" asp-action="Cart" asp-route-id="@UserManager.GetUserId(User)"></a>
             </li>
