@@ -29,8 +29,8 @@ namespace SuperDiet.Controllers
             if(!User.IsInRole("Admin"))
             {
                 if (!User.IsInRole("Costumer"))
-                    return Unauthorized();
-                return StatusCode(403);
+                    return RedirectToAction("Error", "Error");
+                return RedirectToAction("Error", "Error");
             }
             return View();
         }
@@ -40,8 +40,8 @@ namespace SuperDiet.Controllers
             if (!User.IsInRole("Admin"))
             {
                 if (!User.IsInRole("Costumer"))
-                    return Unauthorized();
-                return StatusCode(403);
+                    return RedirectToAction("Error", "Error");
+                return RedirectToAction("Error", "Error");
             }
             return View(await _context.Item.ToListAsync());
         }
@@ -52,8 +52,8 @@ namespace SuperDiet.Controllers
             if (!User.IsInRole("Admin"))
             {
                 if (!User.IsInRole("Costumer"))
-                    return Unauthorized();
-                return StatusCode(403);
+                    return RedirectToAction("Error", "Error");
+                return RedirectToAction("Error", "Error");
             }
             return View(await _context.Users.ToListAsync());
         }
@@ -130,8 +130,8 @@ namespace SuperDiet.Controllers
             if (!User.IsInRole("Admin"))
             {
                 if (!User.IsInRole("Costumer"))
-                    return Unauthorized();
-                return StatusCode(403);
+                    return RedirectToAction("Error", "Error");
+                return RedirectToAction("Error", "Error");
             }
             return View(await _context.Branch.ToListAsync());
         }
@@ -142,8 +142,8 @@ namespace SuperDiet.Controllers
             if (!User.IsInRole("Admin"))
             {
                 if (!User.IsInRole("Costumer"))
-                    return Unauthorized();
-                return StatusCode(403);
+                    return RedirectToAction("Error", "Error");
+                return RedirectToAction("Error", "Error");
             }
             return View();
         }
@@ -168,18 +168,18 @@ namespace SuperDiet.Controllers
         {
             if (id == null)
             {
-                return NotFound();
+                return RedirectToAction("Error", "Error");
             }
             if (!User.IsInRole("Admin"))
             {
                 if (!User.IsInRole("Costumer"))
-                    return Unauthorized();
-                return StatusCode(403);
+                    return RedirectToAction("Error", "Error");
+                return RedirectToAction("Error", "Error");
             }
             var item = await _context.Branch.FindAsync(id);
             if (item == null)
             {
-                return NotFound();
+                return RedirectToAction("Error", "Error");
             }
             return View(item);
         }
@@ -193,7 +193,7 @@ namespace SuperDiet.Controllers
         {
             if (id != branch.ID)
             {
-                return NotFound();
+                return RedirectToAction("Error", "Error");
             }
 
             if (ModelState.IsValid)
@@ -207,7 +207,7 @@ namespace SuperDiet.Controllers
                 {
                     if (!BranchExists(branch.ID))
                     {
-                        return NotFound();
+                        return RedirectToAction("Error", "Error");
                     }
                     else
                     {
@@ -224,19 +224,19 @@ namespace SuperDiet.Controllers
         {
             if (id == null)
             {
-                return NotFound();
+                return RedirectToAction("Error", "Error");
             }
             if (!User.IsInRole("Admin"))
             {
                 if (!User.IsInRole("Costumer"))
-                    return Unauthorized();
-                return StatusCode(403);
+                    return RedirectToAction("Error", "Error");
+                return RedirectToAction("Error", "Error");
             }
             var item = await _context.Branch
                 .FirstOrDefaultAsync(m => m.ID == id);
             if (item == null)
             {
-                return NotFound();
+                return RedirectToAction("Error", "Error");
             }
             return View(item);
         }
@@ -262,19 +262,19 @@ namespace SuperDiet.Controllers
         {
             if (id == null)
             {
-                return NotFound();
+                return RedirectToAction("Error", "Error");
             }
             if (!User.IsInRole("Admin"))
             {
                 if (!User.IsInRole("Costumer"))
-                    return Unauthorized();
-                return StatusCode(403);
+                    return RedirectToAction("Error", "Error");
+                return RedirectToAction("Error", "Error");
             }
             var item = await _context.Item
                 .FirstOrDefaultAsync(m => m.ID == id);
             if (item == null)
             {
-                return NotFound();
+                return RedirectToAction("Error", "Error");
             }
             return View(item);
         }
@@ -393,8 +393,8 @@ namespace SuperDiet.Controllers
             if (!User.IsInRole("Admin"))
             {
                 if (!User.IsInRole("Costumer"))
-                    return Unauthorized();
-                return StatusCode(403);
+                    return RedirectToAction("Error", "Error");
+                return RedirectToAction("Error", "Error");
             }
             return View();
         }
@@ -420,18 +420,18 @@ namespace SuperDiet.Controllers
         {
             if (id == null)
             {
-                return NotFound();
+                return RedirectToAction("Error", "Error");
             }
             if (!User.IsInRole("Admin"))
             {
                 if (!User.IsInRole("Costumer"))
-                    return Unauthorized();
-                return StatusCode(403);
+                    return RedirectToAction("Error", "Error");
+                return RedirectToAction("Error", "Error");
             }
             var item = await _context.Item.FindAsync(id);
             if (item == null)
             {
-                return NotFound();
+                return RedirectToAction("Error", "Error");
             }
             return View(item);
         }
@@ -445,7 +445,7 @@ namespace SuperDiet.Controllers
         {
             if (id != item.ID)
             {
-                return RedirectToAction(nameof(ErrorView));
+                return RedirectToAction("Error", "Error");
             }
 
             if (ModelState.IsValid)
@@ -459,7 +459,7 @@ namespace SuperDiet.Controllers
                 {
                     if (!ItemExists(item.ID))
                     {
-                        return RedirectToAction("ErrorView", new { error = "item not found" });
+                        return RedirectToAction("Error", "Error");
                     }
                     else
                     {
@@ -481,14 +481,14 @@ namespace SuperDiet.Controllers
             if (!User.IsInRole("Admin"))
             {
                 if (!User.IsInRole("Costumer"))
-                    return Unauthorized();
-                return StatusCode(403);
+                    return RedirectToAction("Error", "Error");
+                return RedirectToAction("Error", "Error");
             }
             var item = await _context.Item
                 .FirstOrDefaultAsync(m => m.ID == id);
             if (item == null)
             {
-                return NotFound();
+                return RedirectToAction("Error", "Error");
             }
 
             return View(item);
@@ -508,12 +508,6 @@ namespace SuperDiet.Controllers
         private bool ItemExists(int id)
         {
             return _context.Item.Any(e => e.ID == id);
-        }
-
-        public IActionResult ErrorView(string error)
-        {
-            ViewBag.Massage = error;
-            return View(error);
         }
     }
 }

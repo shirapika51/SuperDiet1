@@ -46,65 +46,65 @@ namespace SuperDiet.Controllers
         [TempData]
         public string StatusMessage { get; set; }
 
-        [HttpGet]
-        public async Task<IActionResult> Index()
-        {
-            var user = await _userManager.GetUserAsync(User);
-            if (user == null)
-            {
-                throw new ApplicationException($"Unable to load user with ID '{_userManager.GetUserId(User)}'.");
-            }
+        //[HttpGet]
+        //public async Task<IActionResult> Index()
+        //{
+        //    var user = await _userManager.GetUserAsync(User);
+        //    if (user == null)
+        //    {
+        //        throw new ApplicationException($"Unable to load user with ID '{_userManager.GetUserId(User)}'.");
+        //    }
 
-            var model = new IndexViewModel
-            {
-                Username = user.UserName,
-                Email = user.Email,
-                PhoneNumber = user.PhoneNumber,
-                IsEmailConfirmed = user.EmailConfirmed,
-                StatusMessage = StatusMessage
-            };
+        //    var model = new IndexViewModel
+        //    {
+        //        Username = user.UserName,
+        //        Email = user.Email,
+        //        PhoneNumber = user.PhoneNumber,
+        //        IsEmailConfirmed = user.EmailConfirmed,
+        //        StatusMessage = StatusMessage
+        //    };
 
-            return View(model);
-        }
+        //    return View(model);
+        //}
 
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Index(IndexViewModel model)
-        {
-            if (!ModelState.IsValid)
-            {
-                return View(model);
-            }
+        //[HttpPost]
+        //[ValidateAntiForgeryToken]
+        //public async Task<IActionResult> Index(IndexViewModel model)
+        //{
+        //    if (!ModelState.IsValid)
+        //    {
+        //        return View(model);
+        //    }
 
-            var user = await _userManager.GetUserAsync(User);
-            if (user == null)
-            {
-                throw new ApplicationException($"Unable to load user with ID '{_userManager.GetUserId(User)}'.");
-            }
+        //    var user = await _userManager.GetUserAsync(User);
+        //    if (user == null)
+        //    {
+        //        throw new ApplicationException($"Unable to load user with ID '{_userManager.GetUserId(User)}'.");
+        //    }
 
-            var email = user.Email;
-            if (model.Email != email)
-            {
-                var setEmailResult = await _userManager.SetEmailAsync(user, model.Email);
-                if (!setEmailResult.Succeeded)
-                {
-                    throw new ApplicationException($"Unexpected error occurred setting email for user with ID '{user.Id}'.");
-                }
-            }
+        //    var email = user.Email;
+        //    if (model.Email != email)
+        //    {
+        //        var setEmailResult = await _userManager.SetEmailAsync(user, model.Email);
+        //        if (!setEmailResult.Succeeded)
+        //        {
+        //            throw new ApplicationException($"Unexpected error occurred setting email for user with ID '{user.Id}'.");
+        //        }
+        //    }
 
-            var phoneNumber = user.PhoneNumber;
-            if (model.PhoneNumber != phoneNumber)
-            {
-                var setPhoneResult = await _userManager.SetPhoneNumberAsync(user, model.PhoneNumber);
-                if (!setPhoneResult.Succeeded)
-                {
-                    throw new ApplicationException($"Unexpected error occurred setting phone number for user with ID '{user.Id}'.");
-                }
-            }
+        //    var phoneNumber = user.PhoneNumber;
+        //    if (model.PhoneNumber != phoneNumber)
+        //    {
+        //        var setPhoneResult = await _userManager.SetPhoneNumberAsync(user, model.PhoneNumber);
+        //        if (!setPhoneResult.Succeeded)
+        //        {
+        //            throw new ApplicationException($"Unexpected error occurred setting phone number for user with ID '{user.Id}'.");
+        //        }
+        //    }
 
-            StatusMessage = "Your profile has been updated";
-            return RedirectToAction(nameof(Index));
-        }
+        //    StatusMessage = "Your profile has been updated";
+        //    return RedirectToAction(nameof(Index));
+        //}
 
         [HttpPost]
         [ValidateAntiForgeryToken]
@@ -131,7 +131,7 @@ namespace SuperDiet.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> ChangePassword()
+        public async Task<IActionResult> Index()
         {
             var user = await _userManager.GetUserAsync(User);
             if (user == null)
@@ -151,7 +151,7 @@ namespace SuperDiet.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> ChangePassword(ChangePasswordViewModel model)
+        public async Task<IActionResult> Index(ChangePasswordViewModel model)
         {
             if (!ModelState.IsValid)
             {
@@ -175,7 +175,7 @@ namespace SuperDiet.Controllers
             _logger.LogInformation("User changed their password successfully.");
             StatusMessage = "Your password has been changed.";
 
-            return RedirectToAction(nameof(ChangePassword));
+            return RedirectToAction(nameof(Index));
         }
 
         [HttpGet]
@@ -191,7 +191,7 @@ namespace SuperDiet.Controllers
 
             if (hasPassword)
             {
-                return RedirectToAction(nameof(ChangePassword));
+                return RedirectToAction(nameof(Index));
             }
 
             var model = new SetPasswordViewModel { StatusMessage = StatusMessage };
