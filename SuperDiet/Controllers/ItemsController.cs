@@ -39,14 +39,14 @@ namespace SuperDiet.Controllers
         {
             if (id == null)
             {
-                return NotFound();
+                return RedirectToAction("Error", "Error");
             }
 
             var item = await _context.Item
                 .SingleOrDefaultAsync(m => m.ID == id);
             if (item == null)
             {
-                return NotFound();
+                return RedirectToAction("Error", "Error");
             }
 
             return View(item);
@@ -58,12 +58,12 @@ namespace SuperDiet.Controllers
             var UserID = (await _userManager.GetUserAsync(HttpContext.User))?.Id;
             if (UserID == null)
             {
-                return Unauthorized();
+                return RedirectToAction("Error", "Error");
             }
             var item = await _context.Item.SingleOrDefaultAsync(m => m.ID == ItemId);
             if (item == null || item.Quantity == 0)
             {
-                return NotFound();
+                return RedirectToAction("Error", "Error");
             }
             var itemOrder = await _context.ItemOrder.SingleOrDefaultAsync(m => m.OrderID == UserID && m.ItemID == ItemId);
             var Orderuser = await _context.Order.SingleOrDefaultAsync(m => m.ID == UserID);
@@ -91,12 +91,12 @@ namespace SuperDiet.Controllers
         {
             if (id == null)
             {
-                return NotFound();
+                return RedirectToAction("Error", "Error");
             }
             var order = await _context.Order.FirstOrDefaultAsync(m => m.ID == id);
             if (order == null)
             {
-                return NotFound();
+                return RedirectToAction("Error", "Error");
             }
             return View(order);
         }

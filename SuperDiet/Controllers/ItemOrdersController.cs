@@ -28,7 +28,7 @@ namespace SuperDiet.Controllers
             var UserID = (await _userManager.GetUserAsync(HttpContext.User))?.Id;
             if (UserID == null)
             {
-                return Unauthorized();
+                return RedirectToAction("Error", "Error");
             }
             var items = from itemOrder in _context.ItemOrder
                         join item in _context.Item on itemOrder.ItemID equals item.ID
@@ -66,12 +66,12 @@ namespace SuperDiet.Controllers
             var UserID = (await _userManager.GetUserAsync(HttpContext.User))?.Id;
             if (UserID == null)
             {
-                return Unauthorized();
+                return RedirectToAction("Error", "Error");
             }
             var itemOrder = _context.ItemOrder.Where(m => m.ItemID == ItemId && m.OrderID == UserID).First();
             if (itemOrder == null)
             {
-                return NotFound();
+                return RedirectToAction("Error", "Error");
             }
             itemOrder.Quantity--;
             var item = await _context.Item.SingleOrDefaultAsync(p => p.ID == itemOrder.ItemID);
