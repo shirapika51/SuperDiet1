@@ -1,9 +1,19 @@
 ﻿/* Please see documentation at https://docs.microsoft.com/aspnet/core/client-side/bundling-and-minification\ 
 for details on configuring this project to bundle and minify static web assets. */
+@font-face {
+    font-family: myFirstFont;
+    src: url(~/fonts/Assistant/Assistant-Regular.ttf);
+}
+
 body {
     padding-top: 50px;
     padding-bottom: 20px;
     direction: rtl;
+    font-family: 'Arimo', sans-serif;
+}
+
+h2 {
+    text-shadow: 2px 2px rgb(172, 191,217);
 }
 
 th { 
@@ -63,6 +73,11 @@ th {
     width: 400px;
     margin: auto;
     margin-top: 50px;
+    transition: width 2s;
+}
+
+.weatherwidget-io:hover {
+    width: 700px;
 }
 
 /* QR code generator */
@@ -84,6 +99,18 @@ th {
 .welcome-section {
     text-align: center;
 }
+
+    .welcome-section #news {
+        -webkit-column-count: 3; /* Chrome, Safari, Opera */
+        -moz-column-count: 3; /* Firefox */
+        column-count: 3;
+        -webkit-column-width: 100px; /* Chrome, Safari, Opera */
+        -moz-column-width: 100px; /* Firefox */
+        column-width: 100px;
+        border: 2px solid rgb(172, 191,217);
+        padding: 10px;
+        border-radius: 25px;
+    }
 
 .branch-section {
     text-align: center;
